@@ -47,29 +47,13 @@ public class Data {
         JSONArray a = (JSONArray) parser.parse(new FileReader("cities.json"));
 
         for (Object o : a) {
-
             JSONObject object = (JSONObject) o;
-
             String country = (String) object.get("country");
-            //System.out.println(country);
-
             String name = (String) object.get("name");
-            //System.out.println(city);
-
             String lat = (String) object.get("lat");
-            //System.out.println(lat);
-
             String lng = (String) object.get("lng");
-            //System.out.println(lng);
             Country tmpCountry = new Country(country, name, lat, lng);
             allCountry.add(tmpCountry);
-
-            //JSONArray cars = (JSONArray) object.get("cars");
-
-            /*for (Object c : cars)
-			    {
-			      System.out.println(c+"");
-			    }*/
         }
     }
 }
