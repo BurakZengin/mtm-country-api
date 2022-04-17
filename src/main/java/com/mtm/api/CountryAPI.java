@@ -67,6 +67,7 @@ public class CountryAPI {
             }
 
             localData.setTurkey();
+            log.info("Returning response with word:{}, response: {}", word, localData.getResponseCountry());
             return new ResponseEntity<>(localData.getResponseCountry(), HttpStatus.OK);
         } else if (flag == 0) {
             log.error("Bad request is returning because flag is 0, with search word: {}", word);
