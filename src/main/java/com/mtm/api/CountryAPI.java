@@ -67,7 +67,7 @@ public class CountryAPI {
             }
 
             localData.setTurkey();
-            log.info("Returning response with word:{}, response: {}", word, localData.getResponseCountry());
+            log.info("Returning response with word:{}, response: {}", word, localData.getResponseCountry().toString());
             return new ResponseEntity<>(localData.getResponseCountry(), HttpStatus.OK);
         } else if (flag == 0) {
             log.error("Bad request is returning because flag is 0, with search word: {}", word);
@@ -78,7 +78,7 @@ public class CountryAPI {
             localData.getResponseCountry().clear();
             localData.getResponseCountry().addAll((Collection<? extends Country>) set);
             localData.setTurkey();
-            log.info("Returning response with word:{}, response: {}", word, localData.getResponseCountry());
+            log.info("Returning response with word:{}, response: {}", word, localData.getResponseCountry().toString());
             return new ResponseEntity<>(localData.getResponseCountry(), HttpStatus.OK);
         }
     }
