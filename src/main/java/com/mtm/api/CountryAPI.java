@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/")
+@Slf4j
 public class CountryAPI {
 
     Data data;
@@ -30,13 +33,14 @@ public class CountryAPI {
         int flag = 0;
         int i = 0, countrySize = data.getAllCountry().size();
         int count = 0;
-        data.getResponseCountry().clear();
+        Data localData = new Data();
+
         for (i = 0; i < countrySize && count < 5; i++) {
             if (((word.length() + 2) == data.getAllCountry().get(i).getName().length()
                     || (word.length() + 1) == data.getAllCountry().get(i).getName().length())
                     && data.getAllCountry().get(i).getCountry().equals("TR")
                     && findWord(word, data.getAllCountry().get(i).getName())) {
-                data.getResponseCountry().add(data.getAllCountry().get(i));
+                localData.getResponseCountry().add(data.getAllCountry().get(i));
                 flag = 1;
                 count++;
             }
@@ -44,36 +48,37 @@ public class CountryAPI {
         }
         for (i = 0; i < countrySize; i++) {
             if (word.length() >= data.getAllCountry().get(i).getName().length() && findWord(word, data.getAllCountry().get(i).getName())) {
-                data.getResponseCountry().add(data.getAllCountry().get(i));
+                localData.getResponseCountry().add(data.getAllCountry().get(i));
                 flag = 1;
                 count++;
             }
 
         }
-        System.out.println("count: " + count);
+
         if (count < 5) {
-            for (i = 0; i < countrySize && data.getResponseCountry().size() < 5; i++) {
+            for (i = 0; i < countrySize && localData.getResponseCountry().size() < 5; i++) {
                 if (findWord(word, data.getAllCountry().get(i).getName())) {
-                    data.getResponseCountry().add(data.getAllCountry().get(i));
-                    Set<Country> set = new HashSet<>(data.getResponseCountry());
-                    data.getResponseCountry().clear();
-                    data.getResponseCountry().addAll((Collection<? extends Country>) set);
+                    localData.getResponseCountry().add(data.getAllCountry().get(i));
+                    Set<Country> set = new HashSet<>(localData.getResponseCountry());
+                    localData.getResponseCountry().clear();
+                    localData.getResponseCountry().addAll((Collection<? extends Country>) set);
 
                 }
             }
-            System.out.println("countson: " + count);
 
-            this.setTurkey();
-            return new ResponseEntity<>(data.getResponseCountry(), HttpStatus.OK);
+            localData.setTurkey();
+            return new ResponseEntity<>(localData.getResponseCountry(), HttpStatus.OK);
         } else if (flag == 0) {
+            log.error("Bad request is returning because flag is 0, with search word: {}", word);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
 
-            Set<Country> set = new HashSet<>(data.getResponseCountry());
-            data.getResponseCountry().clear();
-            data.getResponseCountry().addAll((Collection<? extends Country>) set);
-            this.setTurkey();
-            return new ResponseEntity<>(data.getResponseCountry(), HttpStatus.OK);
+            Set<Country> set = new HashSet<>(localData.getResponseCountry());
+            localData.getResponseCountry().clear();
+            localData.getResponseCountry().addAll((Collection<? extends Country>) set);
+            localData.setTurkey();
+            log.info("Returning response with word:{}, response: {}", word, localData.getResponseCountry());
+            return new ResponseEntity<>(localData.getResponseCountry(), HttpStatus.OK);
         }
     }
 
@@ -87,17 +92,4 @@ public class CountryAPI {
         }
         return true;
     }
-
-    private void setTurkey() {
-        int count = 0;
-        for (int i = 0; i < data.responseCountry.size(); i++) {
-            if (data.responseCountry.get(i).getCountry().equals("TR")) {
-                Country tmp = data.getResponseCountry().get(i);
-                data.getResponseCountry().remove(i);
-                data.getResponseCountry().add(0, tmp);
-
-            }
-        }
-    }
-
 }

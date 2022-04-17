@@ -56,4 +56,15 @@ public class Data {
             allCountry.add(tmpCountry);
         }
     }
+
+    public void setTurkey() {
+        for (int i = 0; i < responseCountry.size(); i++) {
+            if (responseCountry.get(i).getCountry().equals("TR")) {
+                Country tmp = responseCountry.get(i);
+                responseCountry.remove(i);
+                responseCountry.add(0, tmp);
+
+            }
+        }
+    }
 }
